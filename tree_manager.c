@@ -29,17 +29,13 @@ struct node *find_node(struct node *root, char path[])
     struct node *cur;
 
     if (strcmp(path, "/") == 0)
-    {
         return NULL;
-    }
 
     strcpy(buf, path);
     token = strtok(buf + 1, "/");
 
     if (token == NULL || root == NULL || strlen(token) != 1 || root->data != token[0])
-    {
         return NULL;
-    }
 
     cur = root;
     token = strtok(NULL, "/");
@@ -47,21 +43,13 @@ struct node *find_node(struct node *root, char path[])
     while (token != NULL)
     {
         if (strlen(token) != 1)
-        {
             return NULL;
-        }
         if (cur->left != NULL && cur->left->data == token[0])
-        {
             cur = cur->left;
-        }
         else if (cur->right != NULL && cur->right->data == token[0])
-        {
             cur = cur->right;
-        }
         else
-        {
             return NULL;
-        }
         token = strtok(NULL, "/");
     }
 
@@ -76,17 +64,13 @@ struct node *find_parent(struct node *root, char path[])
     struct node *parent;
 
     if (strcmp(path, "/") == 0)
-    {
         return NULL;
-    }
 
     strcpy(buf, path);
     token = strtok(buf + 1, "/");
 
     if (token == NULL || root == NULL || strlen(token) != 1 || root->data != token[0])
-    {
         return NULL;
-    }
 
     cur = root;
     parent = NULL;
@@ -95,9 +79,8 @@ struct node *find_parent(struct node *root, char path[])
     while (token != NULL)
     {
         if (strlen(token) != 1)
-        {
             return NULL;
-        }
+        
         if (cur->left != NULL && cur->left->data == token[0])
         {
             parent = cur;
@@ -109,9 +92,7 @@ struct node *find_parent(struct node *root, char path[])
             cur = cur->right;
         }
         else
-        {
             return NULL;
-        }
         token = strtok(NULL, "/");
     }
 
@@ -123,49 +104,31 @@ void print_node(struct node *cur, char prefix[], int is_last, int is_root)
     char new_prefix[MAX_PATH];
 
     if (cur == NULL)
-    {
         return;
-    }
 
     if (is_root == 1)
-    {
         printf("%c\n", cur->data);
-    }
     else
-    {
         printf("%s+---%c\n", prefix, cur->data);
-    }
 
     strcpy(new_prefix, prefix);
     if (is_root == 1)
-    {
         new_prefix[0] = '\0';
-    }
     else if (is_last == 1)
-    {
         strcat(new_prefix, "    ");
-    }
     else
-    {
         strcat(new_prefix, "|   ");
-    }
 
     if (cur->left != NULL)
-    {
         print_node(cur->left, new_prefix, cur->right == NULL, 0);
-    }
     if (cur->right != NULL)
-    {
         print_node(cur->right, new_prefix, 1, 0);
-    }
 }
 
 void free_tree(struct node *cur)
 {
     if (cur == NULL)
-    {
         return;
-    }
     free_tree(cur->left);
     free_tree(cur->right);
     free(cur);
@@ -264,13 +227,9 @@ tree_t insert_child(tree_t t, char parent_path[], char child, char value)
     new_node->right = NULL;
 
     if (child == 'L')
-    {
         parent->left = new_node;
-    }
     else
-    {
         parent->right = new_node;
-    }
 
     t.count = t.count + 1;
     return t;
@@ -297,17 +256,11 @@ tree_t delete_node(tree_t t, char leaf_path[])
     parent = find_parent(t.root, leaf_path);
 
     if (parent == NULL)
-    {
         t.root = NULL;
-    }
     else if (parent->left == target)
-    {
         parent->left = NULL;
-    }
     else
-    {
         parent->right = NULL;
-    }
 
     free(target);
     t.count = t.count - 1;
@@ -332,13 +285,9 @@ tree_t update_value(tree_t t, char node_path[], char value)
     if (parent != NULL)
     {
         if (parent->left == target)
-        {
             sibling = parent->right;
-        }
         else
-        {
             sibling = parent->left;
-        }
     }
 
     if (sibling != NULL && sibling->data == value)
@@ -362,21 +311,13 @@ void read_child(tree_t t, char parent_path[])
     }
 
     if (target->left != NULL && target->right != NULL)
-    {
         printf("%c(L), %c(R)\n", target->left->data, target->right->data);
-    }
     else if (target->left != NULL)
-    {
         printf("%c(L)\n", target->left->data);
-    }
     else if (target->right != NULL)
-    {
         printf("%c(R)\n", target->right->data);
-    }
     else
-    {
         printf("자식이 없습니다.\n");
-    }
 }
 
 void print_btree(tree_t t)
