@@ -2,26 +2,28 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#include <strings.h>
 
 #define MAX_LINE 200
 #define MAX_PATH 200
 #define MAX_TOKENS 10
 
+// 이진트리 노드 구조체
 struct node
 {
-    char data;
-    struct node *left;
-    struct node *right;
+    char data;          // 노드에 저장된 데이터 (영문 대문자)
+    struct node *left;  // 왼쪽 자식 노드 포인터
+    struct node *right; // 오른쪽 자식 노드 포인터
 };
 
+// 이진트리 전체 관리 구조체
 typedef struct
 {
-    struct node *root;
-    int max_size;
-    int count;
+    struct node *root;  // 루트 노드 포인터
+    int max_size;       // 최대 저장 가능한 노드 수
+    int count;          // 현재 저장된 노드 수
 } tree_t;
 
+// 경로(/A/B/C)를 따라가며 해당하는 노드를 찾아 반환하는 함수
 struct node *find_node(struct node *root, char path[])
 {
     char buf[MAX_PATH];
@@ -56,6 +58,7 @@ struct node *find_node(struct node *root, char path[])
     return cur;
 }
 
+// 특정 경로의 노드에 대한 부모 노드를 찾아 반환하는 함수
 struct node *find_parent(struct node *root, char path[])
 {
     char buf[MAX_PATH];
@@ -99,6 +102,7 @@ struct node *find_parent(struct node *root, char path[])
     return parent;
 }
 
+// 이진트리를 왼쪽으로 눕힌 형태로 재귀 출력하는 보조 함수
 void print_node(struct node *cur, char prefix[], int is_last, int is_root)
 {
     char new_prefix[MAX_PATH];
@@ -342,6 +346,7 @@ tree_t destroy_btree(tree_t t)
     return t;
 }
 
+// 명령어 전체 이름 또는 첫 글자 매칭 검사 함수
 int match_command(char token[], char full_name[])
 {
     if (isupper((unsigned char)token[0]) == 0)
@@ -353,22 +358,19 @@ int match_command(char token[], char full_name[])
     return 0;
 }
 
+// 입력된 문자열이 유효한 영문 대문자 한 글자 인지 확인
 int is_upper_letter(char s[])
 {
     if (strlen(s) != 1)
-    {
         return 0;
-    }
     if (isupper((unsigned char)s[0]) == 0)
-    {
         return 0;
-    }
     return 1;
 }
 
 tree_t process_insert(tree_t t, char tokens[][MAX_LINE], int count)
 {
-    if (count == 3)
+    if (count == 3) // 루트 노드 생성인 경우 (Insert / A)
     {
         if (strcmp(tokens[1], "/") != 0)
         {
@@ -383,7 +385,7 @@ tree_t process_insert(tree_t t, char tokens[][MAX_LINE], int count)
         return insert_root(t, tokens[2][0]);
     }
 
-    if (count == 4)
+    if (count == 4) // 자식 노드 추가인 경우 (Insert parent child data)
     {
         if (strcmp(tokens[1], "/") == 0)
         {
@@ -457,6 +459,7 @@ void process_print(tree_t t, char tokens[][MAX_LINE], int count)
     print_btree(t);
 }
 
+// 메인 함수: 사용자 입력을 받아 명령어를 분기 처리
 int main(void)
 {
     tree_t t;
@@ -465,8 +468,10 @@ int main(void)
     int count;
     char *tok;
 
+    // 최대 1000개 노드를 저장할 수 있는 빈 이진트리 생성
     t = create_btree(1000);
 
+    // 표준 입력으로부터 한 줄씩 명령어를 읽어 처리
     while (fgets(line, MAX_LINE, stdin) != NULL)
     {
         count = 0;
@@ -481,6 +486,7 @@ int main(void)
         if (count == 0)
             continue;
 
+        // 명령어 매칭 및 실행
         if (match_command(tokens[0], "Insert") == 1)
             t = process_insert(t, tokens, count);
         else if (match_command(tokens[0], "Delete") == 1)
@@ -495,6 +501,7 @@ int main(void)
             printf("오류: 잘못된 명령어입니다.\n");
     }
 
+    // 프로그램 종료 전 동적 할당된 트리 메모리 해제
     t = destroy_btree(t);
     return 0;
 }
