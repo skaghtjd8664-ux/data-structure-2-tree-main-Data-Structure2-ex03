@@ -403,14 +403,12 @@ tree_t destroy_btree(tree_t t)
 
 int match_command(char token[], char full_name[])
 {
-    if (strcasecmp(token, full_name) == 0)
-    {
+    if (isupper((unsigned char)token[0]) == 0)
+        return 0;
+    if (strcmp(token, full_name) == 0)
         return 1;
-    }
-    if (strlen(token) == 1 && toupper((unsigned char)token[0]) == full_name[0])
-    {
+    if (strlen(token) == 1 && token[0] == full_name[0])
         return 1;
-    }
     return 0;
 }
 
@@ -540,34 +538,20 @@ int main(void)
         }
 
         if (count == 0)
-        {
             continue;
-        }
 
         if (match_command(tokens[0], "Insert") == 1)
-        {
             t = process_insert(t, tokens, count);
-        }
         else if (match_command(tokens[0], "Delete") == 1)
-        {
             t = process_delete(t, tokens, count);
-        }
         else if (match_command(tokens[0], "Update") == 1)
-        {
             t = process_update(t, tokens, count);
-        }
         else if (match_command(tokens[0], "Read") == 1)
-        {
             process_read(t, tokens, count);
-        }
         else if (match_command(tokens[0], "Print") == 1)
-        {
             process_print(t, tokens, count);
-        }
         else
-        {
             printf("오류: 잘못된 명령어입니다.\n");
-        }
     }
 
     t = destroy_btree(t);
